@@ -198,7 +198,7 @@ My personal experience is that the SSDT method (PHASE 2 ON MACOS: softPowerPlayT
 
 DeviceProperties method usually needs to add SSDT-BRG0.aml to work properly (you have it in the SSDT folder). As with the SSDT above, check that the IOReg path in SSDT-BRG0.aml is the one for your system.
 
-```c**
+```c++
 DefinitionBlock ("", "SSDT", 2, "ACDT", "BRG0", 0x00000000)
 {
     External (_SB_.PCI0.PEG0.PEGP, DeviceObj)
