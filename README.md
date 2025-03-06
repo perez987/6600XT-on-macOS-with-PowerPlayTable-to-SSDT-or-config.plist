@@ -1,10 +1,10 @@
 # AMD 6600 on macOS: Zero RPM disabled with softPowerPlayTable (SSDT or config.plist)
 
-AMD PowerPlay technology allows graphics card to vary performance based on demand, switching between performance and power saving. It has automatic operating modes based on predefined parameters It also allows user settings.
+AMD PowerPlay technology allows graphics card to vary performance based on demand, switching between performance and power saving. It has automatic operating modes based on predefined parameters. It also allows user settings.
 
 Windows 10 and 11 can make a copy of these energy profiles in the PP_PhmSoftPowerPlayTable registry key whose value is so called SoftPowerPlayTable (SPPT), long hexadecimal string. It is a way to have a quick reference by the operating system.
 
-This SPPT key can be read and modified by some utilities. Thanks to this, it is possible to modify parameters of the operation of the graphics card, changing their behavior and/or energy management and port these settings to macOS.
+This SPPT key can be read and modified. Thanks to this, it is possible to modify parameters of the graphics card operation, changing their behavior and/or energy management and bring these settings to macOS.
 
 ---
 
@@ -14,29 +14,29 @@ This SPPT key can be read and modified by some utilities. Thanks to this, it is 
 
 ### Zero RPM
 
-AMD Radeon 5000 and 6000 series cards come from factory with Zero RPM function activated so that fans are stopped below a temperature (60º), this makes them completely silent except when graphics processor is demanded (tests, games, etc.).
+AMD Radeon 5000 and 6000 series cards come from factory with Zero RPM feature activated so that fans are stopped below 60º, this makes them completely silent except when graphics processor is demanded (tests, games, etc.).
 
-On my PC, for example, the base temperature in Windows is 35-40º and in macOS it is 50-55º. Although these are safe temperatures for daily use, some users would prefer to have values similar to those of Windows.
+On my PC, for example, the base temperature is Windows is 35-45º on Windows and 45-55º on macOS. Although these are safe temperatures for daily use, some users would prefer to have values like the ones in Windows.
 
-The quickest and most effective way to achieve this is by disabling Zero RPM so that fans are spinning all the time and not just above a predefined temperature. However, this is very easy to do on Windows with the Radeon software but on macOS this option does not exist.
+Quickest and most effective way to achieve this is by disabling Zero RPM so that fans are spinning all the time and not just above a predefined temperature. However, this is very easy to do on Windows with the Radeon software but on macOS this option does not exist.
 
 ### SoftPowerPlayTable
 
-One way to disable Zero RPM on macOS without changing any other parameters is by using the SPPT table created in Windows. To obtain the SPPT table you have to go to Windows, where it is generated as a registry key and exported to a file that we take to macOS where the file is modified and added to an SSDT file or to the OpenCore config.plist file.
+One way to disable Zero RPM on macOS without changing any other parameters is by using the SPPT table created in Windows. To obtain the SPPT table you have to go to Windows, where it is generated as a registry key and exported to a file that we bring to macOS where the file is adapted to be added to an SSDT file or to the OpenCore config.plist file.
 
 ---
 
 ## PHASE 1 ON WINDOWS
 
-We need 2 apps:
+We need:
 
 * GPU-Z (from TechPowerUp): Loads the firmware (vBIOS) of the graphics card and exports it to a ROM file that can be read by MorePowerTool.
-* MorePowerTool (MPT) (from Igor'sLAB): Reads the ROM file with the firmware and manages the PP_PhmSoftPowerPlayTable registry key (delete or create new).
+* MorePowerTool (MPT) (from Igor'sLAB): Reads the ROM file with the firmware and handles the PP_PhmSoftPowerPlayTable registry key (delete or create new).
 
 **GPU-Z** loads the GPU specifications and allows you to export everything to a file with ROM extension.
 
-* To export (Graphics Card tab) use the arrow icon that comes out of a rectangle below the AMD Radeon logo, to the right of the text box with the BIOS version
-* In the Advanced tab you have to write down the Bus number in the DeviceLocation key, this number (on my system it is 3) is important later, when looking for the SPPT key in the Windows registry.
+* To export (Graphics Card tab) use the arrow icon that comes out of a rectangle below the AMD Radeon logo, next to the text box with the BIOS version
+* In the Advanced tab you have to write down the Bus number (DeviceLocation key), this number (on my system it is 3) is important later, if we need to look for the SPPT key in the Windows registry.
 
 <Img title="GPU-Z" src="Img/GPU-Z-1.png" alt="" width="500px">
 </br>
@@ -45,9 +45,10 @@ We need 2 apps:
 **MPT** is where the task of generating the SPPT key with Zero RPM disabled is performed.
 
 * At the top, choose the GPU model you have installed; it usually shows the bus number (noted above) at the beginning of the name (3 in this case).
-* It is advisable to delete the table that may already exist in the registry from the Delete SPPT button.
+* It is advisable to delete the table that may already exist in the registry (Delete SPPT button).
 * Load the ROM file generated with GPU-Z (Load button).
 * Modify the Zero RPM option by unchecking the checkbox in 2 tabs: Features and Fan.
+* Save the new settings in the SPPT registry key (Write SPPT button).
 
 <Img title="MorePoweTool" src="Img/MorePoweTool-1.png" alt="" width="500px">
 </br>
@@ -55,27 +56,27 @@ We need 2 apps:
 
 There are 2 ways to export the configuration, both ways end up in a text file with the SPPT table:
 
-<b><u>Method 1</u></b>: A more complex method is to write the new SPPT table in the registry from the Write SPPT button, this key is located in
+<b><u>Method 1</u></b>: Simplest method is, from MorePowerTool, click on the Save button:
+
+* In the Save file dialog choose Save As REG (registry file).
+* A text file with REG extension is generated that contains only the PP_PhmSoftPowerPlayTable registry key.
+* Save the file somewhere accessible from macOS.
+
+<b><u>Method 2</u></b>: A more complex method is to write the new SPPT table in the registry, this key is located in
 `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\`
 
 * There are some numbered keys here, choose the one that matches the bus number you have written down before: `0003\PP_PhmSoftPowerPlayTable` in my system.
-* With key 0003 selected, export it as registry file (REG) or text file (TXT). File structure is different in each case. Both are valid but REG file has a more readable structure.
-* Regedit exports the entire 003 key, not just the PP_PhmSoftPowerPlayTable key.
+* With key 0003 selected, export it as registry file (REG) or text file (TXT). File structure is different in each case. Both are valid but REG file has a more readable structure and it is the file format I recommend choosing.
+* Regedit exports the entire 003 key, not just the PP_PhmSoftPowerPlayTable key as in method 1.
 * Save the files somewhere accessible from macOS.
-
-<b><u>Method 2</u></b>: The simplest method is, from MorePowerTool, click on the Save button:
-
-* In the Save file dialog choose Save As REG (registry file).
-* A text file with REG extension is generated that contains only the PP_PhmSoftPowerPlayTable key.
-* Save the file somewhere accessible from macOS.
 
 ---
 
 ## PHASE 2 ON MACOS: softPowerPlayTable in SSDT
 
-Convert the text of the Windows files into a formatted hexadecimal string so that it can be included in SSDT (`softPowerPlayTable in SSDT`) or in config.plist (`softPowerPlayTable in DeviceProperties`) and loaded by OpenCore.
+Convert the text of the Windows files to a formatted hexadecimal string so that it can be included in a SSDT (`softPowerPlayTable in SSDT`) or in config.plist (`softPowerPlayTable in DeviceProperties`), to be loaded by OpenCore.
 
-This task is possible thanks to Anton Sychev ([klich3](https://github.com/klich3)) and the scripts he has developed to make it very simple. 
+This task is possible thanks to Anton Sychev ([klich3](https://github.com/klich3)) and the scripts he has developed to make it very easy. 
 
 ### softPowerPlayTable table from GPU ROM
 
@@ -96,118 +97,94 @@ upp --pp-file=extracted.pp_table extract -r <rom_file>.rom
 * The final text will appear in the Scripts/Result folder. It will have two versions, one in plain text (Results.txt) and the other as DSL (Results.dsl).
 * Copy the content of the selected file and paste into your SSDT.
 
-<u>Note</u>: With this method we have the factory default table. Zero RPM feature has not been changed in any way.
+<u>Note</u>: With this method we have the factory default table. Zero RPM feature has not been changed in any way. **This is not what this tutorial is intended for**.
 
 ### softPowerPlayTable table from Windows registry
 
-This method allows you to bring a modified SPPT table to macOS to disable or modify the Zero RPM feature, customizing the behavior of the graphics card. In the Windows phase we have saved the SPPT table as PP_PhmSoftPowerPlayTable key in the Windows registry and we have taken it to 3 different files:
+This allows you to bring a modified SPPT table to macOS to disable or modify the Zero RPM feature, customizing the behavior of the graphics card. In Windows phase we have saved the SPPT table as PP_PhmSoftPowerPlayTable key from the Windows registry and we can have it as 3 different files:
 
-* MorePoweTool -> Save -> Save As REG: contains only the PP_PhmSoftPowerPlayTable key
+* MorePoweTool -> Save -> Save As REG: contains only the standalone key PP_PhmSoftPowerPlayTable (this has to be the first option)
 * MorePowerTool -> Write SPPT -> open Registry Editor -> look for the key in the registry according to the instructions above -> export the entire graphics card section, including but not only PP_PhmSoftPowerPlayTable:
-  * Export as REG: Registry 5 file format (preferred)
-  * Export as TXT: hierarchical text format.
+  * Export as REG: Registry 5 file format
+  * Export as TXT: hierarchical text format (avoid it).
 
-Either of the 3 files must be transformed into a valid hexadecimal string valid for SSDT. This transformation can be done by `PPT_script.command` in a very simple way.
+Either of the 3 files must be transformed into a valid hexadecimal string. This transformation can be done by the Anton Sychev's `PPT_script.command` in a very simple way.
 
-* In the Scripts folder, simply double click on `PPT_script.command`.
-* The program will prompt you to drag and drop the file into the Terminal window.
-* You can select REG or TXT file to transform it into a hexadecimal string valid for SSDT.
-* Final text will appear in the Scripts/Result folder. It will have two versions, one in plain text (Results.txt) and the other as DSL (Results.dsl).
-* Copy the content of the selected file and paste it into your SSDT.
+* In the Scripts folder, double click on `PPT_script.command`.
+* Script will prompt you to drag and drop the REG file onto the Terminal window.
+* Remember that you can select Windows REG or TXT file to transform it into a valid hexadecimal string but REG is preferred.
+* Final text will appear in the `Scripts/Result` folder. There will be 2 versions, one in plain text to be copied and pasted into an SSDT (Results.txt) and the other as a valid SSDT to be used directly (Results.dsl).
 
 <u>Note</u>: With this method we have a custom table. Zero RPM feature has been disabled or set up in a value other than default.
 
 ### Include the hexadecimal string in the SSDT file
 
-This is the code of a fairly common SSDT used with AMD graphics cards (SAMPLE-NAVI.dsl into SSDT folder). You can use it as reference.
+This is the code of a fairly common SSDT used with AMD graphics cards (SSDT folder >> SSDT-ZeroRPM-OFF.dsl). You can use it as reference.
 
 ```c++
-DefinitionBlock("", "SSDT", 2, "DRTNIA", "AMDGPU", 0x00001000)
+DefinitionBlock ("", "SSDT", 2, "ETRX", "RPM", 0x00001000)
 {
-     External (_SB_.PCI0, DeviceObj)
-     External (_SB_.PCI0.PEG0.PEGP, DeviceObj)
+    External (_SB_.PCI0.PEG0.PEGP, DeviceObj)
 
-     Scope (\_SB.PCI0.PEG0.PEGP)
-     {
-         If (_OSI ("Darwin"))
-         {
-             Method (_DSM, 4, NotSerialized) // _DSM: Device-Specific Method
-             {
-                 Local0 = Package (0x02)
-                 {
-// Insert your code here
+    Scope (\_SB.PCI0.PEG0.PEGP)
+    {
+        Device (BRG0)
+        {
+            Name (_ADR, Zero)  // _ADR: Address
+            Device (GFX0)
+            {
+                Name (_ADR, Zero)  // _ADR: Address
+                Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
+                {
+                    If ((!Arg2 || !_OSI ("Darwin")))
+                    {
+                        Return (Buffer (One)
+                        {
+                             0x03                                             // .
+                        })
+                    }
 
-// End mark
-
+                    Return (Package (0x02)
+                    {
+ 
+					// Insert here the content of Result.txt file
+						
+                    })
+                }
+            }
+        }
+    }
 }
-                 DTGP (Arg0, Arg1, Arg2, Arg3, RefOf (Local0))
-                 Return (Local0)
-             }
-         }
-     }
 
-     Scope (\_SB.PCI0)
-     {
-         Method (DTGP, 5, NotSerialized)
-         {
-             If ((Arg0 == ToUUID ("a0b5b7c6-1318-441c-b0c9-fe695eaf949b") /* Unknown UUID */))
-             {
-                 If ((Arg1 == One))
-                 {
-                     If ((Arg2 == Zero))
-                     {
-                         Arg4 = Buffer(One)
-                             {
-                                  0x03 // .
-                             }
-                         Return (One)
-                     }
-
-                     If ((Arg2 == One))
-                     {
-                         Return (One)
-                     }
-                 }
-             }
-
-             Arg4 = Buffer(One)
-                 {
-                      0x00 // .
-                 }
-             Return (Zero)
-         }
-     }
-}
 ```
 
-SPPT table must go right between these comment lines:
+SPPT table must go right here:
 
 ```c++
-// Insert your code here
-
-// End mark
+// Insert here the content of Result.txt file
 ```
 
-Remember to modify the IOReg path of your graphics card based on your system, it may be different. To know the IOReg path to the graphics card, it can be done with:
+Remember to set the IOReg path of your graphics card based on your system, it may be different from the code above. To know the IOReg path to the graphics card, it can be done with:
 
 - *gfxutil* tool.
-- Hackintool: PCIe tab -> Name of your device (e.g. Navi 23 [Radeon RX 6600/6600 XT/6600M]) -> Device Path column -> Context menu -> Copy IOReg path. In my system is: `PCI0.PEG0.PEGP.BRG0.GFX0`.
+- Hackintool: PCIe tab -> Name of your device (e.g. `Navi 23 [Radeon RX 6600/6600 XT/6600M]`) -> Device Path column -> Context menu -> Copy IOReg path.<br>
+This is the path on my system: `PCI0.PEG0.PEGP`. Check yours.
 
-For better identification of the SSDT, rename it to `SSDT-SPPT.aml` and don't forget to compile it to AML format. When you compile the DSL file to AML, the compiler formats text, fills buffer sizes and adds  header with comments.
+For better identification of the SSDT, rename it to `SSDT-ZeroRPM-OFF.aml` and don't forget to compile it to AML format. When you compile DSL file to AML, compiler formats code, fills buffer sizes and adds header with comments.
 
-Place `SSDT-SPPT.aml` in the APCI folder and in config.plist, restart and reload OpenCore.
+Place `SSDT-ZeroRPM-OFF.aml` in APCI folder and config.plist, restart and reload OpenCore.
 
 ### Check that the SSDT loads correctly
 
-To see if everything is right, run IORegistryExplorer and compare what you see with this image (PP_PhmSoftPowerPlayTable is one of the properties of GFX0 or whatever the graphics device is called on your system):
+To see if everything is right, run IORegistryExplorer and compare what you see with this image (PP_PhmSoftPowerPlayTable as one of the properties of GFX0 or whatever graphics device is called on your system):
 
  ![IORegistryExplorer](Img/IOreg-gfx0-ppt.png)
 
-If you have added SPPT string with modified Zero RPM, you must see the changes in GPU temperatures and fans spin. In the image there is 3 conditions, graphics made when there is not high demand:
+Changes are being reflected in GPU temperature and fans spin. In the image below you can see temperatures when Zero RPM is disabled, when it is enabled with fans spinning at 45º and when it is enabled with factory setting (fans spinning at 60º).
 
-- Zero RPM off: Zero RPM disabled, temperature does not rise above 35º
+- Zero RPM off: Zero RPM disabled, temperature does not exceed 35º
 - Zero RPM 45º: fans start at 45º and stop at 40º
-- Zero RPM on: default setting, fans stop below 60º, temps around 50-55º.  
+- Zero RPM on: factory setting, fans stopped below 60º, temps around 50-55º.  
   
   ![Zero RPM](Img/Zero-RPM-on-off.png)
 
@@ -215,35 +192,78 @@ If you have added SPPT string with modified Zero RPM, you must see the changes i
 
 ## PHASE 2 ON MACOS: softPowerPlayTable in DeviceProperties
 
-It's another way to get the SPPT table into macOS as a hexadecimal string to the DeviceProperties section of config.plist, with the PCI path that corresponds to your graphics card. My personal experience is that the SSDT method works as is if the SSDT file is well formed but this method usually needs to add the SSDT-BRG0.aml file to work (you have it in the SSDT folder).
+It's another way to get the SPPT table into macOS as hexadecimal string to be written into DeviceProperties of config.plist.
+
+My personal experience is that the SSDT method (PHASE 2 ON MACOS: softPowerPlayTable in SSDT) works better. But the SSDT must be well built.
+
+DeviceProperties method usually needs to add SSDT-BRG0.aml to work properly (you have it in the SSDT folder). As with the SSDT above, check that the IOReg path in SSDT-BRG0.aml is the one for your system.
+
+```c**
+DefinitionBlock ("", "SSDT", 2, "ACDT", "BRG0", 0x00000000)
+{
+    External (_SB_.PCI0.PEG0.PEGP, DeviceObj)
+
+    Scope (\_SB.PCI0.PEG0.PEGP)
+    {
+        /*
+         * This is a PCI bridge device present on PEGP.
+         * Normally seen as pci-bridge in I/O Registry.
+         */
+        Device (BRG0)
+        {
+            Name (_ADR, Zero)
+            Method (_STA, 0, NotSerialized)  // _STA: Status
+            {
+                If (_OSI ("Darwin"))
+                {
+                    Return (0x0F)
+                }
+                Else
+                {
+                    Return (Zero)
+                }
+            }
+
+            /*
+             * This is an actual GPU device present on the bridge.
+             * Normally seen as display in I/O Registry.
+             */
+            Device (GFX0)
+            {
+                Name (_ADR, Zero)  // _ADR: Address
+            }
+        }
+    }
+}
+```
 
 ### Easy method using script
 
 - Get one of the REG or TXT files generated in Windows.
-- In the Scripts folder is PPT_config-plist.sh
-- Open Terminal and write:<br>
-`sh ./PPT_config-plist.sh <REG-file/TXT>`
-- The output of this command is a long hexadecimal string that must be saved to be used in the config.plist file.
+- PPT_config-plist.sh in Scripts folder
+- Open Terminal and run:<br>
+`sh ./PPT_config-plist.sh reg-or-txt-file`
+- Output is a long hexadecimal string that must be saved to be used in the config.plist file.
 
-### Manual method
+### Manual method using text editor
 
 * Get one of the REG or TXT files generated in Windows.
-* Select the block that begins with `“PP_PhmSoftPowerPlayTable”=` deleting the rest of the text.
-* Also delete `«PP_PhmSoftPowerPlayTable»=hex:` leaving only the hexadecimal string made up of several lines.
+* Keep the block that begins with `“PP_PhmSoftPowerPlayTable”=` deleting the rest of the text.
+* Delete `«PP_PhmSoftPowerPlayTable»=hex:` leaving only the hexadecimal string made up of several lines.
 * Search and replace:
-  * remove the commas
-  * remove spaces at the beginning of the lines
-  * remove backslashes (\) at the end of the lines
+  * remove commas
+  * remove spaces at the beginning of lines
+  * remove backslashes (\) at the end of lines
   * remove line breaks to get a single line string, use Grep in Find and Replace.
 
-Text before the transformation looks like this (the entire string is not shown, just a part):
+Text before looks like this (the entire string is not shown, just a part):
 
 ```
 "PP_PhmSoftPowerPlayTable"=hex:a6,09,12,00,02,22,03,ae,09,00,00,22,43,00,00,83,\
 00,18,00,00,00,1c,00,00,00,00,00,00,76,00,00,00,00,00,00,00,00,00,00,00,00, \
 ```
 
-After the changes it looks like this:
+After it looks like this:
 
 ```
 a6091200022203ae0900002243000008300180000001c0000000000007600000000000000000000000 ...
