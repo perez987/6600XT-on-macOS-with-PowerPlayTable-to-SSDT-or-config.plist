@@ -103,23 +103,29 @@ upp --pp-file=extracted.pp_table extract -r <rom_file>.rom
 
 This allows you to bring a modified SPPT table to macOS to disable or modify the Zero RPM feature, customizing the behavior of the graphics card. In Windows phase we have saved the SPPT table as PP_PhmSoftPowerPlayTable key from the Windows registry and we can have it as 3 different files:
 
-* MorePoweTool -> Save -> Save As REG: contains only the standalone key PP_PhmSoftPowerPlayTable (this has to be the first option)
+* MorePoweTool -> Save -> Save As REG: contains only the standalone key PP_PhmSoftPowerPlayTable (**this has to be the preferred option**)
 * MorePowerTool -> Write SPPT -> open Registry Editor -> look for the key in the registry according to the instructions above -> export the entire graphics card section, including but not only PP_PhmSoftPowerPlayTable:
   * Export as REG: Registry 5 file format
   * Export as TXT: hierarchical text format (avoid it).
 
-Either of the 3 files must be transformed into a valid hexadecimal string. This transformation can be done by the Anton Sychev's `PPT_script.command` in a very simple way.
+Either of the 3 files must be transformed into a valid hexadecimal string. This transformation can be done by Anton Sychev's `PPT_script.command` in a very simple way.
 
-* In the Scripts folder, double click on `PPT_script.command`.
+* In the `Python-Script` folder, double click on `PPT_script.command`.
 * Script will prompt you to drag and drop the REG file onto the Terminal window.
 * Remember that you can select Windows REG or TXT file to transform it into a valid hexadecimal string but REG is preferred.
-* Final text will appear in the `Scripts/Result` folder. There will be 2 versions, one in plain text to be copied and pasted into an SSDT (Results.txt) and the other as a valid SSDT to be used directly (Results.dsl).
+* Output files will appear in the `Python-Script/Result` folder. There will be 2 versions, one in plain text to be copied and pasted into an SSDT (`Results.txt`) and the other as an SSDT ready to be used as is (`Results.dsl`).
 
-<u>Note</u>: With this method we have a custom table. Zero RPM feature has been disabled or set up in a value other than default.
+If using `Results.dsl`, remember to set the IOReg path of your graphics card based on your system, it may be different from the code above. To know the IOReg path to the graphics card, it can be done with:
+
+- *gfxutil* tool.
+- Hackintool: PCIe tab -> Name of your device (e.g. `Navi 23 [Radeon RX 6600/6600 XT/6600M]`) -> Device Path column -> Context menu -> Copy IOReg path.<br>
+This is the path on my system: `PCI0.PEG0.PEGP`. Check yours.
+
+<u>Note</u>: With this method we have a custom table. **Zero RPM feature has been disabled or set up in a value other than default**.
 
 ### Include the hexadecimal string in the SSDT file
 
-This is the code of a fairly common SSDT used with AMD graphics cards (SSDT folder >> SSDT-ZeroRPM-OFF.dsl). You can use it as reference.
+This is the code of a fairly common SSDT used with AMD graphics cards (SSDT folder >> `SSDT-ZeroRPM-OFF.dsl`). You can use it as a reference.
 
 ```c++
 DefinitionBlock ("", "SSDT", 2, "ETRX", "RPM", 0x00001000)
@@ -157,18 +163,13 @@ DefinitionBlock ("", "SSDT", 2, "ETRX", "RPM", 0x00001000)
 }
 
 ```
+_Note_: Please check your IOReg path as stated above.
 
-SPPT table must go right here:
+SPPT table (`Results.txt`) must go right here:
 
 ```c++
 // Insert here the content of Result.txt file
 ```
-
-Remember to set the IOReg path of your graphics card based on your system, it may be different from the code above. To know the IOReg path to the graphics card, it can be done with:
-
-- *gfxutil* tool.
-- Hackintool: PCIe tab -> Name of your device (e.g. `Navi 23 [Radeon RX 6600/6600 XT/6600M]`) -> Device Path column -> Context menu -> Copy IOReg path.<br>
-This is the path on my system: `PCI0.PEG0.PEGP`. Check yours.
 
 For better identification of the SSDT, rename it to `SSDT-ZeroRPM-OFF.aml` and don't forget to compile it to AML format. When you compile DSL file to AML, compiler formats code, fills buffer sizes and adds header with comments.
 
@@ -237,15 +238,21 @@ DefinitionBlock ("", "SSDT", 2, "ACDT", "BRG0", 0x00000000)
 }
 ```
 
+_Note_: Please check your IOReg path as stated above.
+
+<!-- Method has issues, trying to fix it
+
 ### Easy method using script
 
 - Get one of the REG or TXT files generated in Windows.
 - PPT_config-plist.sh in Scripts folder
 - Open Terminal and run:<br>
 `sh ./PPT_config-plist.sh reg-or-txt-file`
-- Output is a long hexadecimal string that must be saved to be used in the config.plist file.
+- Output is a long hexadecimal string that must be saved to be used in the config.plist file. -->
 
 ### Manual method using text editor
+
+_Note_: Text editor should have search and replace options with the ability to use Grep or regular expressions. E.g. Textedit is not a good choice.
 
 * Get one of the REG or TXT files generated in Windows.
 * Keep the block that begins with `“PP_PhmSoftPowerPlayTable”=` deleting the rest of the text.
@@ -256,14 +263,14 @@ DefinitionBlock ("", "SSDT", 2, "ACDT", "BRG0", 0x00000000)
   * remove backslashes (\) at the end of lines
   * remove line breaks to get a single line string, use Grep in Find and Replace.
 
-Text before looks like this (the entire string is not shown, just a part):
+Text before transformation: (full string is not displayed, it is too long):
 
 ```
 "PP_PhmSoftPowerPlayTable"=hex:a6,09,12,00,02,22,03,ae,09,00,00,22,43,00,00,83,\
 00,18,00,00,00,1c,00,00,00,00,00,00,76,00,00,00,00,00,00,00,00,00,00,00,00, \
 ```
 
-After it looks like this:
+Text after transformation:
 
 ```
 a6091200022203ae0900002243000008300180000001c0000000000007600000000000000000000000 ...
@@ -277,7 +284,7 @@ You must know the PCI path to the graphics card, it can be done with
 - Hackintool: PCIe tab -> Name of your device (e.g. Navi 23 [Radeon RX 6600/6600 XT/6600M]) -> Device Path column -> Context menu -> Copy PCI path. In my system is:<br>
 `PciRoot(0x0)/Pci(0x1.0x0)/Pci(0x0.0x0)/Pci(0x0.0x0)/Pci(0x0.0x0)`.
 
-Open the config.plist file in DeviceProperties >> Add > PciRoot(0x0)/Pci(0x1,0x0)/Pci(0x0,0x0)/Pci(0x0,0x0)/Pci(0x0,0x0) and adds PP_PhmSoftPowerPlayTable, its value as Data is the long text string.
+Open the config.plist file >> DeviceProperties >> New item (Dictionary) with name `PciRoot(0x0)/Pci(0x1,0x0)/Pci(0x0,0x0)/Pci(0x0,0x0)/Pci(0x0,0x0)` >> New item (Data) with name `PP_PhmSoftPowerPlayTable` >> its value is the long hex string.
 
 ![DeviceProperties](Img/DeviceProperties.png)
 
@@ -288,11 +295,11 @@ Open the config.plist file in DeviceProperties >> Add > PciRoot(0x0)/Pci(0x1,0x0
          <data>Long string, seen as: hexadecimal in PLIST file editors and as Base64 in plain text editors</data>
 </dict>
 ```
-**Important**: Don't forget to add (ACPI folder and config.plist) the SSDT-BRG0.aml file in which you must check the IOReg path to the graphics card as explained above.
+**Important**: Don't forget to add (ACPI folder and config.plist) the SSDT-BRG0.aml file in which you must check the IOReg path to the graphics card as explained above. DeviceProperties method usually fails without this SSDT.
 
-Reboot. If everything goes fine, you will see that fans are spinning all the time with a very low sound, base temperature rarely exceeds 40º (when there is not high graphics load) and test scores have not changed.
+Reboot. If everything goes fine, you will see that fans are spinning all the time with a very low sound, base temperature rarely exceeds 45º (when there is not high graphics load) and test scores have not changed.
 
-Note: slight errors in the hexadecimal string can lead to a black screen when reaching the Desktop, it is highly recommended to have an EFI that works and can boot macOS on a USB device or another disk in case of problems.
+_Note_: slight errors in the hexadecimal string can lead to a black screen when reaching the Desktop, it is highly recommended to have a working EFI to boot macOS on a USB device or another disk in case of problems.
 
 ---
 
@@ -312,4 +319,4 @@ I have tried these settings: Start Temperature 40º and Stop temperature 35. Wit
 
 * [Igor'sLAB](https://www.igorslab.de/en/) whose editor-in-chief is Igor Wallossek.
 * [TechPowerUp](https://www.techpowerup.com/gpuz/), GPU-Z developers.
-* Anton Sychev ([klich3](https://github.com/klich3)), SSDT method, `PPT_script.command` and `PPT_config-plist.sh` scripts developer. `PPT_script.command` has its own site as [PPT-table-tool](https://github.com/klich3/PPT-table-tool).
+* Anton Sychev ([klich3](https://github.com/klich3)), SSDT method and scripts developer. `PPT_script.command` has its own site as [PPT-table-tool](https://github.com/klich3/PPT-table-tool).

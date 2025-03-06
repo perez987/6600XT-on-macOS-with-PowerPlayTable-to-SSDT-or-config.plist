@@ -43,31 +43,25 @@ Score in the Geeks3D FurMark test is double with the RX 6600 XT than with the RX
 
 ### Temperature sensor
 
-Starting with the Radeon VII model, it is necessary to use kexts to read the temperature of AMD graphics cards since macOS stopped exposing that data directly. This also applies to the 6000 series. To know the temperature of the card you can use [RadeonSensor](https://github.com/ChefKissInc/RadeonSensor). It consists of 3 elements:
+Starting with the Radeon VII model, macOS stopped exposing the GPU temperature directly. This also applies to the 6000 series. To know the temperature of the card you can use a VirtualSMC plug-in [RadeonSensor](https://github.com/ChefKissInc/RadeonSensor).
 
-- Radeon sensor.kext: Lilu plugin to read card temperature
-- SMCRadeonGPU.kext: to export data via VirtualSMC to monitoring tools such as iStat Menus
-- RadeonGadget.app: to display the temperature in the menu bar, it requires RadeonSensor.kext only.
-
-Note: SMCRadeonGPU.kext has to go after RadeonSensor.kext in the config file.plist of OpenCore and of course both after Lilu and VirtualSMC.
-
-I have tested these 2 extensions together and they seem to work well, iStat Menus adds the temperature of the 6600 XT as one more sensor to display in the menu bar.
+I have tested RadeonSensor and it seems to work fine, iStat Menus monitors the temperature of the 6600 XT card which is added as another sensor in the menu bar.
 
 ### Resizable BAR (ReBAR)
 
 AMD Radeon 6600 cards support ReBAR. To activate this feature you must:
 
-- Enable it in BIOS menu (usually next to Above 4G Decoding option, ReBAR is displayed when enabling this option)
+- Enable it in BIOS menu (usually next to Above 4G Decoding option, ReBAR is hidden when Above 4G Decoding is disabled)
 - Set config file.plist in order for OpenCore to boot with ReBAR enabled, you have to set the value of Boot >> Quirks >> ResizeAppleGpuBars=0 (instead of -1, default value).
 
 **Note**: UEFI >> Quirks >> ResizeGpuBars must always be -1.
 
-I have tested the card with ReBAR on and off and I have not noticed any difference. GeekBench 5 test scores on macOS and FurMark on Windows have been virtually identical.
+I have tested the card with ReBAR on and off and I have not noticed any difference. GeekBench 5 test scores on macOS and FurMark on Windows have been virtually identical with ReBAR on and off.
 It is likely that with a CPU of 10th generation or newer and games of big graphic demand the performance will improve with ReBAR enabled but, at least in my system, there is no gain in it.
 
 ---
 
-### AMD 5000 and 6000 performance issue in Monterey 12.3 (fixed in Monterey **12.3.1** and newer)
+### [Obsolete] AMD 5000 and 6000 performance issue in Monterey 12.3 (fixed in Monterey **12.3.1** and newer)
 
 The release of macOS Monterey 12.3 has broken the operation of Radeon 5000 and 6000 families, not in all cases but in quite a few of them judging by comments posted on the forums. This problem has also happened on real Macs but it seems to be more much more frequent on Hackintosh. 5500, 5700, 6800 and 6900 models (XT and non XT) have been most affected. 6600 models (XT and non XT) seem to be free of the issue that manifests itself in a very evident drop in graphic performance after updating to 12.3, in some cases the system becomes unusable and in other cases a big part of the graphic power is simply lost.
 
@@ -105,7 +99,7 @@ Note: PCI path to the GPU may be the same on your system but it is convenient to
 
 Although my GPU has not been affected by this Monterey 12.3 issue, I have tried the patch motivated by curiosity to check if the card works differently (better or worse). When booting with the patch, it gets my attention that the GPU temperature is, with idle system, 10-15º below the usual 50º. The cause is in the deactivation of the Zero RPM feature: fans spin all the time with a small drawback that is the noise generated (very low volume, almost imperceptible except in quiet environment).
 
-Graphics performance is good with the patch. GeekBench 5 metal scores are lower but other benchmarks such as Unigine Valley or GFXBench Metal are almost identical. Maximum temperature when forcing the GPU has not changed, about 80º, the same as without the patch. But basic temperature at iddle system ranges from 35 to 40º. Sensations when performing common tasks on macOS are the same (excellent) with or without patch. 
+GeekBench 5 metal scores are lower but other benchmarks such as Unigine Valley or GFXBench Metal are almost identical. Maximum temperature when forcing the GPU has not changed, about 80º, the same as without the patch. But basic temperature at iddle system ranges from 35 to 40º. Sensations when performing common tasks on macOS are the same (excellent) with or without patch. 
 
 Unexpectedly, I have seen a way to disable Zero RPM in macOS, it is easier to implement than creating sPPT in Windows and its subsequent transfer to macOS.
 
