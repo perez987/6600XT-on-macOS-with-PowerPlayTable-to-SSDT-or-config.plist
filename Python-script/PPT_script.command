@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Get the curent directory, script name and the script name with "py" extension.
+# Get the current directory, script name and script name with "py" extension
 args=( "$@" )
 dir="${0%/*}"
 script="${0##*/}"
