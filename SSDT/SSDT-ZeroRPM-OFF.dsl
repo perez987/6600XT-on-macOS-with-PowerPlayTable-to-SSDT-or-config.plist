@@ -1,3 +1,5 @@
+ /* Check your IOReg path, it may be different */
+
 DefinitionBlock ("", "SSDT", 2, "ETRX", "RPM", 0x00001000)
 {
     External (_SB_.PCI0.PEG0.PEGP, DeviceObj)

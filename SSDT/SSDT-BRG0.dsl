@@ -6,6 +6,8 @@
  * PciRoot(0x0)/Pci(0x1,0x0)/Pci(0x0,0x0)/Pci(0x0,0x0)/Pci(0x0,0x0)
  * Such tables are particularly relevant for macOS 11.0 and newer.
  */
+ 
+ /* Check your IOReg path, it may be different */
 
 DefinitionBlock ("", "SSDT", 2, "ACDT", "BRG0", 0x00000000)
 {
