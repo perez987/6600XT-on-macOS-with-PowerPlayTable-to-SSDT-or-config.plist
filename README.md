@@ -197,7 +197,7 @@ It's another way to get the SPPT table into macOS as hexadecimal string to be wr
 
 My personal experience is that the SSDT method (PHASE 2 ON MACOS: softPowerPlayTable in SSDT) works better. But the SSDT must be well built.
 
-DeviceProperties method usually needs to add SSDT-BRG0.aml to work properly (you have it in the SSDT folder). As with the SSDT above, check that the IOReg path in SSDT-BRG0.aml is the one for your system.
+DeviceProperties method usually needs SSDT-BRG0.aml to work properly (you have it in the SSDT folder). As with the SSDT above, check that the IOReg path in SSDT-BRG0.aml is the one for your system.
 
 ```c++
 DefinitionBlock ("", "SSDT", 2, "ACDT", "BRG0", 0x00000000)
@@ -237,8 +237,6 @@ DefinitionBlock ("", "SSDT", 2, "ACDT", "BRG0", 0x00000000)
     }
 }
 ```
-
-_Note_: Please check your IOReg path as stated above.
 
 <!-- Method has issues, trying to fix it
 
@@ -319,4 +317,4 @@ I have tried these settings: Start Temperature 40º and Stop temperature 35. Wit
 
 * [Igor'sLAB](https://www.igorslab.de/en/) whose editor-in-chief is Igor Wallossek.
 * [TechPowerUp](https://www.techpowerup.com/gpuz/), GPU-Z developers.
-* Anton Sychev ([klich3](https://github.com/klich3)), SSDT method and scripts developer. `PPT_script.command` has its own site as [PPT-table-tool](https://github.com/klich3/PPT-table-tool).
+* Anton Sychev ([klich3](https://github.com/klich3)): SSDT method and scripts. `PPT_script.command` has its own site as [PPT-table-tool](https://github.com/klich3/PPT-table-tool).
