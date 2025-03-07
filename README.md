@@ -115,7 +115,7 @@ Either of the 3 files must be transformed into a valid hexadecimal string. This 
 * Remember that you can select Windows REG or TXT file to transform it into a valid hexadecimal string but REG is preferred.
 * Output files will appear in the `Python-Script/Result` folder. There will be 2 versions, one in plain text to be copied and pasted into an SSDT (`Results.txt`) and the other as an SSDT ready to be used as is (`Results.dsl`).
 
-If using `Results.dsl`, remember to set the IOReg path of your graphics card based on your system, it may be different from the code above. To know the IOReg path to the graphics card, it can be done with:
+When working with the SSDT, remember to set the IOReg path of your graphics card based on your system, it may be different from the code above. To know the IOReg path to the graphics card, it can be done with:
 
 - *gfxutil* tool.
 - Hackintool: PCIe tab -> Name of your device (e.g. `Navi 23 [Radeon RX 6600/6600 XT/6600M]`) -> Device Path column -> Context menu -> Copy IOReg path.<br>
@@ -250,7 +250,7 @@ DefinitionBlock ("", "SSDT", 2, "ACDT", "BRG0", 0x00000000)
 
 ### Manual method using text editor
 
-_Note_: Text editor should have search and replace options with the ability to use Grep or regular expressions. E.g. Textedit is not a good choice.
+_Note_: Text editor should have search and replace options with the ability to use Grep or regular expressions. E.g. TextEdit is not a good choice.
 
 * Get one of the REG or TXT files generated in Windows.
 * Keep the block that begins with `“PP_PhmSoftPowerPlayTable”=` deleting the rest of the text.
