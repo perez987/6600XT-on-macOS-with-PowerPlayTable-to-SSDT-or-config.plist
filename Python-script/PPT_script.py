@@ -5,7 +5,7 @@
 Author: <Anton Sychev> (anton at sychev dot xyz) 
 PPT_script.py (c) 2024 
 Created:  2024-03-04 20:11:00 
-Desc: Creation of PPT Power Play Tables from win registry exports files
+Desc: Creation of PPT Power Play Tables from win registry exported files
 """
 
 

@@ -1,3 +1,10 @@
+"""
+█▀ █▄█ █▀▀ █░█ █▀▀ █░█
+▄█ ░█░ █▄▄ █▀█ ██▄ ▀▄▀
+
+run.py (c) 2024 
+"""
+
 import sys
 import subprocess
 import threading

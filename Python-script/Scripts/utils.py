@@ -1,3 +1,10 @@
+"""
+█▀ █▄█ █▀▀ █░█ █▀▀ █░█
+▄█ ░█░ █▄▄ █▀█ ██▄ ▀▄▀
+
+utils.py (c) 2024 
+"""
+
 import sys, os, time, re, json, datetime, ctypes, subprocess
 
 if os.name == "nt":

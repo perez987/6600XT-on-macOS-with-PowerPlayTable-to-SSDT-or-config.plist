@@ -1,3 +1,12 @@
+# █▀ █▄█ █▀▀ █░█ █▀▀ █░█
+# ▄█ ░█░ █▄▄ █▀█ ██▄ ▀▄▀
+# 
+# Author: <Anton Sychev> (anton at sychev dot xyz) 
+# PPT_script.command (c) 2024 
+# Created:  2024-03-04 20:11:00 
+# Desc: Creation of PPT Power Play Tables from win registry exported files
+
+
 #!/usr/bin/env bash
 
 # Get the current directory, script name and script name with "py" extension
