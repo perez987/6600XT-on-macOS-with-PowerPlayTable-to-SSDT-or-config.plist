@@ -27,23 +27,23 @@ The card is long size but no longer than the XFX RX 580 it will replace. Surpris
 
 Physical placement of the card does not deserve comment, it's like any other PCI-e slot card.
 
-Installation on macOS is very simple. The same EFI with OpenCore 0.7.8 (Lilu and WhateverGreen included) that worked with the RX 580 works for the 6600 XT with a single change: add `agdpmod=pikera` in boot-args to prevent the screen from going black on the desktop.
+Installation on macOS is very simple. The same EFI with OpenCore 0.7.8 (Lilu and WhateverGreen included) that worked with the RX 580 works for the 6600 XT with a single change: add `agdpmod=pikera` in boot-args to prevent black screen on the desktop.
 
 The card is well recognized in System profile.
 
 ### Working on macOS
 
-Overall performance is very good, smooth, with 2560x1440 resolution at 60Hz on a 4K monitor. Score in GeekBench 5 test is around 60% higher than the RX 580 (around **80000** vs **50000**).
+Overall performance is very good, smooth, with 2560x1440 resolution at 60Hz on a 4K monitor. Score in GeekBench 5 test is around 60% higher than the RX 580 (**80000** vs **50000**).
 
 ### Working on Windows
 
 Many Hackintosh users have double booting with Windows. Here the impressions are also very good, system has kept the same AMD drivers without requiring update.
 
-Score in the Geeks3D FurMark test is double with the RX 6600 XT than with the RX 580 (approx. **6100** vs **3000**).
+Score in the Geeks3D FurMark test is double with the RX 6600 XT than with the RX 580 (**6000** vs **3000**).
 
 ### Temperature sensor
 
-Starting with the Radeon VII model, macOS stopped exposing the GPU temperature directly. This also applies to the 6000 series. To know the temperature of the card you can use a VirtualSMC plug-in [RadeonSensor](https://github.com/ChefKissInc/RadeonSensor).
+Starting with the Radeon VII model, macOS stopped exposing GPU temperature. This also applies to the 6000 series. To know the temperature of the card you can use the VirtualSMC plug-in [RadeonSensor](https://github.com/ChefKissInc/RadeonSensor).
 
 I have tested RadeonSensor and it seems to work fine, iStat Menus monitors the temperature of the 6600 XT card which is added as another sensor in the menu bar.
 
