@@ -1,4 +1,4 @@
-# AMD 6600 on macOS: Zero RPM disabled with softPowerPlayTable (SSDT or config.plist)
+# AMD 6600 on macOS: Zero RPM disabled with softPowerPlayTable
 
 AMD PowerPlay technology allows graphics card to vary performance based on demand, switching between performance and power saving. It has automatic operating modes based on predefined parameters. It also allows user settings.
 
